@@ -92,10 +92,10 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Lorenzo Bracciale - lorenzo.bracciale@uniroma2.it
-Pierpalo Loreti - pierpaolo.loreti@uniroma2.it
-Emanuele Raso - emanuele.raso@uniroma2.it
-Giuseppe Bianchi - giuseppe.bianchi@uniroma2.it
+* Lorenzo Bracciale - lorenzo.bracciale@uniroma2.it
+* Pierpalo Loreti - pierpaolo.loreti@uniroma2.it
+* Emanuele Raso - emanuele.raso@uniroma2.it
+* Giuseppe Bianchi - giuseppe.bianchi@uniroma2.it
 
 The work has been submitted to publication.
 
