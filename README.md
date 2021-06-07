@@ -102,4 +102,4 @@ The work has been submitted to publication.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[product-screenshot]: doc/images/smart_lock.png
+[product-screenshot]: doc/images/smart_lock_1.png
