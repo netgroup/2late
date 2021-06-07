@@ -1,9 +1,6 @@
 """
 Perform initial encryption of data in DATA, placing encrypted data in ENCDATA
 """
-
-
-
 import argparse
 import hashlib
 import os
@@ -43,7 +40,9 @@ def encrypt_file(source_path, dest_path):
     Rmsg = int_from_bytes(hmsg.digest()) # this is H(R0|dirname)
 
     # encrypt the symmetric key as key * g^{H(R0|dirname)} 
-    encrypted_key = int_from_bytes(key) * pow(g, Rmsg, p) % p #TODO qui abbiamo un problema perché la chiave è più piccola di p
+    #TODO: qui abbiamo un problema perché la chiave è più piccola di p
+    #TODO: la moltiplicazione la facciamo cosi?
+    encrypted_key = int_from_bytes(key) * pow(g, Rmsg, p) % p
     print(f"Key is {key}")
     print(f"Encrypted key is {encrypted_key}")
 
@@ -57,7 +56,10 @@ def encrypt_file(source_path, dest_path):
                 break
             yield data
     # prepend the encrypted key to the file
-    df.write(encrypted_key)
+    #TODO: capire quanto è lunga la encrypted key  
+    #fare lunghezza fissa e mettere padding?
+    # https://cryptography.io/en/latest/hazmat/primitives/padding/
+    df.write(int_to_bytes(encrypted_key))
     for piece in read_in_chunks(sf):
         print(piece)
         encrypted = f.encrypt(piece)

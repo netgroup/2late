@@ -12,7 +12,9 @@ def decrypt_file(source_path, key):
     """
     sf = open(source_path, "rb")
     f = Fernet(key)
+    # TODO capire chiave
     enc_skey = sf.read(HYBRID_KEY_LEN)
+    # TODO da bytes a intero...
     skey = enc_skey * key % p
     def read_in_chunks(file_object, chunk_size=1024):
         """Lazy function (generator) to read a file piece by piece.

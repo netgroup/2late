@@ -14,9 +14,9 @@ def reencrypt_file(file_path):
     """
     print(f"Re-encrypting f{file_path}")
     f = open(source_path, "rb")
-    key = f.read(HYBRID_KEY)
+    key = f.read(HYBRID_KEY_LEN)
     # TODO generate the new key
-    new_key = key
+    new_key = key * Ri % p
     f.seek(0)
     f.write(new_key)
     f.close()
@@ -25,6 +25,7 @@ def gen_new_ri():
     """
     Generate the R_i as H(R_{i-1})
     """
+    pass
 
 def main():
     parser = argparse.ArgumentParser(description='Encrypt a data repository')
