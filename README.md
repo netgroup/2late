@@ -5,7 +5,7 @@
     <img src="doc/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">2-Late</h3>
 
   <p align="center">
     Proxy-reencryption module for offline devices
