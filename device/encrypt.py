@@ -18,38 +18,30 @@ def encrypt_file(source_path, dest_path):
     """
     print(f"Encrypting {source_path} to {dest_path}")
 
+    # encrypt source file in dest file
     sf = open(source_path, "rb")
     df = open(dest_path, "wb")
 
+    # get a random sym key
     key = Fernet.generate_key()
     f = Fernet(key)
 
-    # get the subdir name, to compute H(R|subdir)
+    # get the subdir name, to compute H(R1|subdir)
     subdir_name = source_path.split('/')[-2]
     print(f"subdir name is {subdir_name}")
+    # get R0_msg
+    # add the salt taken from the directory name
     hmsg =  hashlib.sha256()
     hmsg.update(int_to_bytes(R0) + subdir_name.encode("utf8"))
-    Rmsg = int_from_bytes(hmsg.digest()) # this is H(R0|dirname)
+    R0_msg = int_from_bytes(hmsg.digest()) # H(R0|subdir)
 
     # encrypt the symmetric key as key * g^{H(R0|dirname)} 
     assert(len(int_to_bytes(p)) > len(hmsg.digest())) # key < p
-    encrypted_key = int_from_bytes(key) * pow(g, Rmsg, p) % p
+    encrypted_key = int_from_bytes(key) * pow(g, R0_msg, p) % p
     print(f"Key is {key}")
     print(f"Encrypted key is {encrypted_key}")
     # encrypt all the piece of the original file
 
-    ## prepend the encrypted key to the file
-    #len_encrypted_key = len(int_to_bytes(encrypted_key))
-    #print(f"len_encrypted_key is {len_encrypted_key}")
-    #assert(HYBRID_HEADER_LEN >= len(int_to_bytes(encrypted_key)))
-    #padder = padding.PKCS7(256).padder()
-    #padded_enc_key = padder.update(int_to_bytes(encrypted_key))
-    #padded_enc_key += padder.finalize()
-    #print(f"Padded encrypted key is {padded_enc_key}")
-    #len_padded = len(padded_enc_key)
-    #print(f"Padded encrypted key len is {len_padded}")
-    #assert(len(padded_enc_key) == HYBRID_HEADER_LEN)
-    #df.write(padded_enc_key)
     assert(len(int_to_bytes(encrypted_key)) == HYBRID_HEADER_LEN)
     df.write(int_to_bytes(encrypted_key))
     # encrypt and write the file content

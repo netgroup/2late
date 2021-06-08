@@ -6,7 +6,7 @@ from cryptography.fernet import Fernet
 from utils import int_to_bytes, int_from_bytes, read_in_chunks
 from settings import HYBRID_HEADER_LEN, R0, g, p, q
 
-i = 0 #time
+i = 0 #number of re-encryption perfomed on files
 Ri = 123
 
 def reencrypt_file(file_path):
@@ -17,16 +17,16 @@ def reencrypt_file(file_path):
     subdir_name = file_path.split('/')[-2]
     print(f"subdir name is {subdir_name}")
     # read the encrypted key
-    f = open(source_path, "rb")
+    f = open(file_path, "r+b")
     enc_key = f.read(HYBRID_HEADER_LEN)
 
     # generate H(Ri |dirname)
     hmsg =  hashlib.sha256()
     hmsg.update(int_to_bytes(Ri) + subdir_name.encode("utf8"))
-    Rmsg = int_from_bytes(hmsg.digest()) # this is H(Ri |dirname)
+    Ri_msg = int_from_bytes(hmsg.digest()) # this is H(Ri |dirname)
     
     # create the new reencrypted key
-    reencrypted_key = int_from_bytes(enc_key) * pow(g, Rmsg, p) % p
+    reencrypted_key = int_from_bytes(enc_key) * pow(g, Ri_msg, p) % p
 
     # write back the result into the file
     f.seek(0)
@@ -34,13 +34,13 @@ def reencrypt_file(file_path):
     assert(len(int_to_bytes(reencrypted_key)) == HYBRID_HEADER_LEN)
     f.close()
 
-def gen_new_ri():
+def gen_next_ri():
     """
-    Generate the R_i as H(R_{i-1})
+    Generate R_i as H(R_{i-1})
     """
     global Ri
     hmsg =  hashlib.sha256()
-    hmsg.update(int_to_bytes(R) + m.encode("utf8"))
+    hmsg.update(int_to_bytes(Ri))
     Ri = int_from_bytes(hmsg.digest())
 
 def main():
@@ -51,6 +51,8 @@ def main():
     args = parser.parse_args()
     target = args.target
     while True:
+        i += 1
+        gen_next_ri()
         print(f"Doing the {i}-th reencryption")
         # for all the file in the repository, do a re-encryption of the symkeys
         for subdir in os.listdir(target):
@@ -59,9 +61,7 @@ def main():
                 for filename in os.listdir(os.path.join(target, subdir)):
                     dest_path = os.path.join(target_subdir, filename)
                     reencrypt_file(dest_path)
-        #gen_new_ri()
         time.sleep(10)
-        i += 1
 
 if __name__ == "__main__":
     main()

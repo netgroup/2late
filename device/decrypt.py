@@ -13,19 +13,13 @@ def decrypt_file(source_path, key):
     """
     sf = open(source_path, "rb")
     enc_skey = sf.read(HYBRID_HEADER_LEN)
-    #padded_enc_skey = sf.read(HYBRID_HEADER_LEN)
-    #print(f"padded_enc_skey: {padded_enc_skey}")
-    ## remove the padding
-    #unpadder = padding.PKCS7(HYBRID_HEADER_LEN * 8 / 2).unpadder()
-    #enc_skey = unpadder.update(padded_enc_skey)
-    #enc_skey += unpadder.finalize()
     enc_skey_int = int_from_bytes(enc_skey)
     print(f"enc_skey: {enc_skey_int}")
     # decrypt the symmetric key   
     skey = enc_skey_int * key % p
     skey_bytes = int_to_bytes(skey)
     print(f"sym key : {skey}")
-    print(f"sym key : {skey_bytes}")
+    print(f"sym key (bytes) : {skey_bytes}")
     # decrypt the file chunk by chunk
     f = Fernet(skey_bytes)
     for piece in read_in_chunks(sf):
