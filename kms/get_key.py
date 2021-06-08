@@ -1,10 +1,7 @@
 import argparse
 import hashlib
+from settings import p, q, R0, g
 
-R0 = 123
-g = 7 # group generator
-p = 14387 # modulus - safe prime
-q = (p - 1) /2 
 
 def int_to_bytes(x: int) -> bytes:
     return x.to_bytes((x.bit_length() + 7) // 8, 'big')

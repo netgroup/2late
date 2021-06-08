@@ -5,17 +5,9 @@ import argparse
 import hashlib
 import os
 from cryptography.fernet import Fernet
-
-R0 = 123
-g = 7 # group generator
-p = 14387 # modulus - safe prime
-q = (p - 1) /2 
-
-def int_to_bytes(x: int) -> bytes:
-    return x.to_bytes((x.bit_length() + 7) // 8, 'big')
-
-def int_from_bytes(xbytes: bytes) -> int:
-    return int.from_bytes(xbytes, 'big')
+from cryptography.hazmat.primitives import padding
+from utils import int_to_bytes, int_from_bytes, read_in_chunks
+from settings import HYBRID_HEADER_LEN, R0, g, p, q
 
 def encrypt_file(source_path, dest_path):
     """
@@ -40,26 +32,27 @@ def encrypt_file(source_path, dest_path):
     Rmsg = int_from_bytes(hmsg.digest()) # this is H(R0|dirname)
 
     # encrypt the symmetric key as key * g^{H(R0|dirname)} 
-    #TODO: qui abbiamo un problema perché la chiave è più piccola di p
-    #TODO: la moltiplicazione la facciamo cosi?
+    assert(len(int_to_bytes(p)) > len(hmsg.digest())) # key < p
     encrypted_key = int_from_bytes(key) * pow(g, Rmsg, p) % p
     print(f"Key is {key}")
     print(f"Encrypted key is {encrypted_key}")
-
     # encrypt all the piece of the original file
-    def read_in_chunks(file_object, chunk_size=1024):
-        """Lazy function (generator) to read a file piece by piece.
-        Default chunk size: 1k."""
-        while True:
-            data = file_object.read(chunk_size)
-            if not data:
-                break
-            yield data
-    # prepend the encrypted key to the file
-    #TODO: capire quanto è lunga la encrypted key  
-    #fare lunghezza fissa e mettere padding?
-    # https://cryptography.io/en/latest/hazmat/primitives/padding/
+
+    ## prepend the encrypted key to the file
+    #len_encrypted_key = len(int_to_bytes(encrypted_key))
+    #print(f"len_encrypted_key is {len_encrypted_key}")
+    #assert(HYBRID_HEADER_LEN >= len(int_to_bytes(encrypted_key)))
+    #padder = padding.PKCS7(256).padder()
+    #padded_enc_key = padder.update(int_to_bytes(encrypted_key))
+    #padded_enc_key += padder.finalize()
+    #print(f"Padded encrypted key is {padded_enc_key}")
+    #len_padded = len(padded_enc_key)
+    #print(f"Padded encrypted key len is {len_padded}")
+    #assert(len(padded_enc_key) == HYBRID_HEADER_LEN)
+    #df.write(padded_enc_key)
+    assert(len(int_to_bytes(encrypted_key)) == HYBRID_HEADER_LEN)
     df.write(int_to_bytes(encrypted_key))
+    # encrypt and write the file content
     for piece in read_in_chunks(sf):
         print(piece)
         encrypted = f.encrypt(piece)
