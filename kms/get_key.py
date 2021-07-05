@@ -20,11 +20,11 @@ def get_key(t, tag):
     for i in range(t+1):
         hmsg = hashlib.sha256()
         hmsg.update(int_to_bytes(Ri) + tag.encode("utf8"))
-        Ri_msg = int_from_bytes(hmsg.digest())
-        print(f"Iteration {i}: Ri_msg={Ri_msg}")
+        ri_tag_digest = int_from_bytes(hmsg.digest())
+        print(f"Iteration {i}: ri_tag_digest={ri_tag_digest}")
 
-        # sum all Ri_msg
-        Rsum = (Rsum + Ri_msg) % q
+        # sum all ri_tag_digest
+        Rsum = (Rsum + ri_tag_digest) % q
 
         # prepare next Ri
         hmsg = hashlib.sha256()

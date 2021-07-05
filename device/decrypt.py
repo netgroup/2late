@@ -15,7 +15,7 @@ def decrypt_file(source_path, key):
     """
     # get the header containing the encrypted symkey
     sf = open(source_path, "rb")
-    sf.seek(TOO_LATE_SIGNATURE_LEN)
+    assert(sf.read(TOO_LATE_SIGNATURE_LEN) == b'2l8')
     enc_skey = sf.read(SYM_KEY_LEN)
     enc_skey_int = int_from_bytes(enc_skey)
     print(f"enc_skey: {enc_skey_int}")
@@ -29,6 +29,7 @@ def decrypt_file(source_path, key):
     for piece in read_in_chunks(sf):
         decrypted = f.decrypt(piece)
         print(decrypted)
+        # TODO: save somewhere the decryption output
     sf.close()
 
 

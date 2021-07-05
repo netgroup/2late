@@ -22,7 +22,7 @@ def encrypt_file(source_path, tag, ri):
     is_encrypted = False
     sf = open(source_path, "r+b")
     header = sf.read(TOO_LATE_SIGNATURE_LEN)
-    is_encrypted = header == "2l8"
+    is_encrypted = header == b"2l8"
     sf.seek(0)
 
     if not is_encrypted:
@@ -51,7 +51,7 @@ def encrypt_file(source_path, tag, ri):
 
         tfp = tempfile.TemporaryFile()
         # write the encrypted sym key
-        tfp.write('2l8')
+        tfp.write(b'2l8')
         tfp.write(int_to_bytes(encrypted_key))
         # encrypt and write the file content
         for piece in read_in_chunks(sf):
