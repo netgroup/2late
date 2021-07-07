@@ -47,22 +47,13 @@ def encrypt_file(source_path, tag, ri):
         # encrypt all the pieces of the original file
 
         assert(len(int_to_bytes(encrypted_key)) == SYM_KEY_LEN)
-        # create a temp file
 
-        tfp = tempfile.TemporaryFile()
-        # write the encrypted sym key
-        tfp.write(b'2l8')
-        tfp.write(int_to_bytes(encrypted_key))
         # encrypt and write the file content
-        for piece in read_in_chunks(sf):
-            encrypted = f.encrypt(piece)
-            tfp.write(encrypted)
-        # temporary file is all set, dump the content to the initial filepath
-        tfp.seek(0)
+        encrypted = f.encrypt(sf.read())
         sf.seek(0)
-        for piece in read_in_chunks(tfp):
-            sf.write(piece)
-        tfp.close()
+        sf.write(b'2l8')
+        sf.write(int_to_bytes(encrypted_key))
+        sf.write(encrypted)
     else:
         # file is already encrypted with symkey, do a re-encryption
         print("Do re-encryption")

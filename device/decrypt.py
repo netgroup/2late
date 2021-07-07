@@ -7,7 +7,7 @@ from utils import int_to_bytes, int_from_bytes, read_in_chunks
 from settings import SYM_KEY_LEN, TOO_LATE_SIGNATURE_LEN, TOO_LATE_HEADER_LEN, g, p, q
 
 
-def decrypt_file(source_path, key):
+def decrypt_file(source_path, key, dest_path):
     """
     Use the key to decrypt the file at source_path.
     File is encrypted using hybrid encryption. 
@@ -26,10 +26,11 @@ def decrypt_file(source_path, key):
     print(f"sym key (bytes) : {skey_bytes}")
     # decrypt the file chunk by chunk using symkey
     f = Fernet(skey_bytes)
-    for piece in read_in_chunks(sf):
-        decrypted = f.decrypt(piece)
-        print(decrypted)
-        # TODO: save somewhere the decryption output
+    decrypted = f.decrypt(sf.read())
+    print(decrypted)
+    # TODO: save somewhere the decryption output
+    with open(dest_path, 'wb') as df:
+        df.write(decrypted)
     sf.close()
 
 
@@ -39,11 +40,13 @@ def main():
                         help='file to decrypt')
     parser.add_argument('key', type=int,
                         help='Cryptographic key to decrypt')
+    parser.add_argument('outfile', type=str, help='output file')
     args = parser.parse_args()
     filename = args.file
     key = args.key
+    outfile = args.outfile
     print(f"Decrypting {filename} with key {key}")
-    decrypt_file(filename, key)
+    decrypt_file(filename, key, outfile)
 
 
 if __name__ == "__main__":
