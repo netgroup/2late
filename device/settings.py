@@ -16,3 +16,6 @@ TOO_LATE_HEADER_LEN = SYM_KEY_LEN + \
 
 CONFIG_FILE = '/tmp/toolate.txt'
 R0 = 123  # this is the secret
+
+LOG_FILE_PATH = '/tmp/'
+LOG_FILE_NAME = 'log'
