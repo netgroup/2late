@@ -7,7 +7,7 @@ def encrypt(plaintext):
   global nonce, tag
   cipher = AES.new(key, AES.MODE_EAX)
   nonce = cipher.nonce
-  ciphertext, tag = cipher.encrypt_and_digest(data)
+  ciphertext, tag = cipher.encrypt_and_digest(plaintext)
   return ciphertext
 
 
@@ -16,8 +16,3 @@ def decrypt(ciphertext):
   cipher2 = AES.new(key, AES.MODE_EAX, nonce=nonce)
   plaintext = cipher2.decrypt(ciphertext)
   return plaintext
-  '''  try:
-    cipher2.verify(tag)
-    print("The message is authentic:", plaintext)
-  except ValueError:
-    print("Key incorrect or message corrupted")'''
