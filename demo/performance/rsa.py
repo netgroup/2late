@@ -1,4 +1,23 @@
 #!/usr/bin/env python
 
-#Scriviamo 256 byte a caso (ad es. ciaociao) li cifriamo 10000 volte e calcoliamo il tempo. Decifiamo l'output 10000 volte e calcoliamo il tempo.
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto import Random
+from Crypto.Cipher import PKCS1_OAEP
 
+random_generator = Random.new().read
+key = RSA.generate(4096, random_generator)  # generate pub and priv key
+publickey = key.publickey()  # pub key export for exchange
+
+key = PKCS1_OAEP.new(key)
+publickey = PKCS1_OAEP.new(publickey)
+
+
+def encrypt(plaintext):
+    encrypted = publickey.encrypt(plaintext)
+    return encrypted
+
+
+def decrypt(ciphertext):
+    decrypted = key.decrypt(ciphertext)
+    return decrypted
