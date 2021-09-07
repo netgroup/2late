@@ -3,7 +3,7 @@
 from charm.schemes.abenc.abenc_bsw07 import CPabe_BSW07
 from charm.toolbox.pairinggroup import GT, PairingGroup
 
-pg = PairingGroup('MNT-224')
+pg = PairingGroup('MNT224')
 cpabe = CPabe_BSW07(pg)
 (public_key, master_secret_key) = cpabe.setup()
 attr_list = ['DEPT1', 'TEAM1']
@@ -12,7 +12,7 @@ pol = '(DEPT1 and TEAM1)'
 random_pg_elem = pg.random(GT)
 
 
-def encrypt(data=random_pg_elem, pairing_group=pg, pk=public_key, policy=pol, debug=0):
+def encrypt(plaintext, data=random_pg_elem, pairing_group=pg, pk=public_key, policy=pol, debug=0):
     """
     Encrypt data using ABE scheme with the given public key and policy
     :param data: the content to encrypt
@@ -32,7 +32,6 @@ def encrypt(data=random_pg_elem, pairing_group=pg, pk=public_key, policy=pol, de
     #elapsed_time = (time() * 1000.0) - starting_time
     #print('[{}] before CPabe_BSW07'.format(elapsed_time))
     # Encrypt data with CP-ABE
-    cpabe = CPabe_BSW07(pairing_group)
 
     #elapsed_time = (time() * 1000.0) - starting_time
     #print('[{}] after Pabe_BSW07'.format(elapsed_time))
@@ -68,9 +67,6 @@ def decrypt(enc_data=None, pk=public_key, sk=secret_key, pairing_group=pg, debug
     :param debug: if 1, prints will be shown during execution; default 0, no prints are shown
     :return: decrypted data
     """
-
-    # Decrypt data with CP-ABE and return the result
-    cpabe = CPabe_BSW07(pairing_group)
 
     # print('############################### ABE.DECRYPT')
     # import traceback

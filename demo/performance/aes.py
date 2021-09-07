@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 from Crypto.Cipher import AES
-
 key = b'Sixteen byte key'
-#Scriviamo 256 byte a caso (ad es. ciaociao) li cifriamo 10000 volte e calcoliamo il tempo. Decifiamo l'output 10000 volte e calcoliamo il tempo.
+cipher = AES.new(key, AES.MODE_CTR)
+nonce = cipher.nonce
+
+
 def encrypt(plaintext):
-  global nonce, tag
-  cipher = AES.new(key, AES.MODE_EAX)
-  nonce = cipher.nonce
-  ciphertext, tag = cipher.encrypt_and_digest(plaintext)
-  return ciphertext
+    ciphertext = cipher.encrypt(plaintext)
+    return ciphertext
 
 
 def decrypt(ciphertext):
-  global nonce, tag
-  cipher2 = AES.new(key, AES.MODE_EAX, nonce=nonce)
-  plaintext = cipher2.decrypt(ciphertext)
-  return plaintext
+    # cipher.initial_value(0)
+    cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
+    plaintext = cipher.decrypt(ciphertext)
+    return plaintext
